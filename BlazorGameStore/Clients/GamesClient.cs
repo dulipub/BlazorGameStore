@@ -6,6 +6,8 @@ public class GamesClient
 {
     private List<GameSummary> Games {  get; set; }
 
+    private readonly List<Genre> Genres;
+
     public GamesClient()
     {
         Games = new List<GameSummary>
@@ -20,9 +22,25 @@ public class GamesClient
             new GameSummary { Id = 8, Name = "Stellaris", Genre = "Strategy", Price = 39.99m, ReleaseDate = new DateOnly(2016, 5, 9) },
             new GameSummary { Id = 9, Name = "Age of Empires II: Definitive Edition", Genre = "Strategy", Price = 29.99m, ReleaseDate = new DateOnly(2019, 11, 14) }
         };
+
+        Genres = new GenreClient().GetData();
     }
     public List<GameSummary> GetData()
     {
         return Games;
+    }
+
+    public void Add(GameDetail gameDetail)
+    {
+        var newGame = new GameSummary
+        {
+            Id = Games.Count + 1,
+            Name = gameDetail.Name,
+            Genre = Genres.FirstOrDefault(g => g.GenreId.ToString() == gameDetail.GenreId)?.Name ?? string.Empty,
+            Price = gameDetail.Price,
+            ReleaseDate = gameDetail.ReleaseDate
+        };
+
+        Games.Add(newGame);
     }
 }

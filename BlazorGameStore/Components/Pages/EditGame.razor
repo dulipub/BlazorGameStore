@@ -1,4 +1,8 @@
 ﻿@page "/editgame"
+@inject NavigationManager NavigationManager
+@inject GamesClient GamesClient
+@inject GenreClient GenreClient
+
 
 <PageTitle>New Game</PageTitle>
 <h3>New Game</h3>
@@ -11,7 +15,7 @@ else
 {
     <div class="row">
         <div class="col-md-4">
-            <EditForm Model="@game" FormName="editgame">
+            <EditForm Model="@game" FormName="editgame" OnSubmit="HandleSubmit">
                 <div class="mb-3">
                     <label for="name" class="form-label">Name : </label>
                     <InputText id="name" class="form-control" @bind-Value="@game.Name" />
@@ -34,25 +38,42 @@ else
                     <label for="releaseDate" class="form-label">Release Date : </label>
                     <InputDate id="releaseDate" class="form-control" @bind-Value="@game.ReleaseDate" />
                 </div>
+                <button class="btn btn-primary" type="submit">Save</button>
+                <button type="button" class="btn btn-secondary" @onclick="Clear">Clear</button>
             </EditForm>
         </div>
     </div>
 }
 
 @code {
+    private List<Genre>? genres;
+
+    [SupplyParameterFromForm]
     private GameDetail game { get; set; } = new()
     {
         Name = string.Empty,
         ReleaseDate = DateOnly.FromDateTime(DateTime.UtcNow)
     };
 
-    private GenreClient genreClient { get; set; } = new();
-    private List<Genre>? genres;
-
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        genres = genreClient.GetData();
+        genres = GenreClient.GetData();
     }
 
+    private void HandleSubmit()
+    {
+        GamesClient.Add(game);
+        NavigationManager.NavigateTo("/");
+    }
+
+    private void Clear()
+    {
+        game = new()
+        {
+            Name = string.Empty,
+            ReleaseDate = DateOnly.FromDateTime(DateTime.UtcNow)
+        };
+        StateHasChanged(); // Notify the UI to refresh
+    }
 }

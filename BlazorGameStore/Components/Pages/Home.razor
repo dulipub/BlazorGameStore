@@ -1,6 +1,8 @@
 ﻿@page "/"
 @page "/home"
 
+@inject GamesClient Client
+
 <PageTitle>Game Catalog - Home</PageTitle>
 
 @if(@games.Count == 0)
@@ -40,12 +42,11 @@ else
 
 @code
 {
-    private GamesClient client = new ();
     private List<GameSummary> games = new();
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        games = client.GetData();
+        games = Client.GetData();
     }
 }

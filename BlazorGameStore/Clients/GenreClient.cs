@@ -14,11 +14,11 @@ public class GenreClient
             new Genre { GenreId = 3, Name = "Sandbox" },
             new Genre { GenreId = 4, Name = "RPG" },
             new Genre { GenreId = 5, Name = "Action" },
-            new Genre { GenreId = 5, Name = "First-Person-Shooter" },
-            new Genre { GenreId = 5, Name = "Strategy" },
-            new Genre { GenreId = 5, Name = "Sports" },
-            new Genre { GenreId = 5, Name = "Racing" },
-            new Genre { GenreId = 5, Name = "Kids" }
+            new Genre { GenreId = 6, Name = "First-Person-Shooter" },
+            new Genre { GenreId = 7, Name = "Strategy" },
+            new Genre { GenreId = 8, Name = "Sports" },
+            new Genre { GenreId = 9, Name = "Racing" },
+            new Genre { GenreId = 10, Name = "Kids" }
         };
     }
 
