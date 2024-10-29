@@ -43,4 +43,21 @@ public class GamesClient
 
         Games.Add(newGame);
     }
+
+    public GameDetail GetGame(int id)
+    {
+        var game = Games.Find(g => g.Id == id);
+        ArgumentNullException.ThrowIfNull(game);
+
+        var genre = Genres.Single(g => g.Name.Equals(game.Genre, StringComparison.CurrentCultureIgnoreCase));
+        var gameDetail = new GameDetail
+        {
+            Id = game.Id,
+            Name = game.Name,
+            GenreId = genre.GenreId.ToString(),
+            Price = game.Price,
+            ReleaseDate = game.ReleaseDate
+        };
+        return gameDetail;
+    }
 }
