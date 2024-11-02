@@ -31,7 +31,13 @@ else
                     <td>@game.Genre</td>
                     <td class="text-end">$@game.Price</td>
                     <td>@game.ReleaseDate</td>
-                    <td></td>
+                    <td>
+                        <div>
+                            <a class="btn btn-primary me-" role="button" href="@GetEditGameUrl(game.Id)">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                        </div>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -49,4 +55,6 @@ else
         base.OnInitialized();
         games = Client.GetData();
     }
+
+    private static string GetEditGameUrl(int id) => $"editgame/{id.ToString()}";
 }

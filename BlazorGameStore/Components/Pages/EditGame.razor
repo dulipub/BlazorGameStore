@@ -1,13 +1,14 @@
 ﻿@page "/editgame"
+@page "/editgame/{id:int}"
 @inject NavigationManager NavigationManager
 @inject GamesClient GamesClient
 @inject GenreClient GenreClient
 
 
 <PageTitle>New Game</PageTitle>
-<h3>New Game</h3>
+<h3>@title</h3>
 
-@if(genres == null)
+@if(genres is null || game is null)
 {
     <p><em>Loading...</em></p>
 }
@@ -52,14 +53,15 @@ else
 }
 
 @code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    private string title { get; set; }
+
     private List<Genre>? genres;
 
     [SupplyParameterFromForm]
-    private GameDetail game { get; set; } = new()
-    {
-        Name = string.Empty,
-        ReleaseDate = DateOnly.FromDateTime(DateTime.UtcNow)
-    };
+    private GameDetail? game { get; set; }
 
     protected override void OnInitialized()
     {
@@ -67,9 +69,44 @@ else
         genres = GenreClient.GetData();
     }
 
+    protected override void OnParametersSet()
+    {
+        //OnParametersSet is called whenever form is loaded. This inlude initial load and submiting
+        //therefore we check if user submit and if form params are populated continue with resetting game to initial state
+        if(game is not null)
+        {
+            return;
+        }
+
+        if(Id is not null)
+        {
+            game = GamesClient.GetGame(Id.Value);
+            title = $"Edit {game.Name}";
+        }
+        else
+        {
+            game = new()
+            {
+                Name = string.Empty,
+                ReleaseDate = DateOnly.FromDateTime(DateTime.UtcNow)
+            };
+            title = "New Game";
+        }
+    }
+
     private void HandleSubmit()
     {
-        GamesClient.Add(game);
+        ArgumentNullException.ThrowIfNull(game);
+        if(Id is null)
+        {
+            GamesClient.Add(game);
+        }
+        else
+        {
+            game.Id = Id.Value;
+            GamesClient.UpdateGame(game);
+        }
+
         NavigationManager.NavigateTo("/");
     }
 
