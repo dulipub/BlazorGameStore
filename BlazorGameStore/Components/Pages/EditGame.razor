@@ -3,7 +3,7 @@
 @inject NavigationManager NavigationManager
 @inject GamesClient GamesClient
 @inject GenreClient GenreClient
-
+@rendermode InteractiveServer
 
 <PageTitle>New Game</PageTitle>
 <h3>@title</h3>
@@ -97,6 +97,7 @@ else
     private void HandleSubmit()
     {
         ArgumentNullException.ThrowIfNull(game);
+        ArgumentException.ThrowIfNullOrEmpty(game.Name);
         if(Id is null)
         {
             GamesClient.Add(game);
