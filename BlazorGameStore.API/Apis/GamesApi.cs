@@ -1,6 +1,4 @@
-﻿
-using BlazorGameStore.API.Models;
-using BlazorGameStore.API.Responses;
+﻿using BlazorGameStore.API.Responses;
 using BlazorGameStore.API.Services;
 using Mapster;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -23,7 +21,8 @@ public static class GamesApi
         return api.WithOpenApi();
     }
 
-    private static async Task<Ok<GameResponse>> GetGame(
+    [ProducesResponseType(typeof(GameResponse), StatusCodes.Status200OK)]
+    private static async Task<Results<Ok<GameResponse>, BadRequest>> GetGame(
         int id,
         [FromServices] IGameService service
         )
