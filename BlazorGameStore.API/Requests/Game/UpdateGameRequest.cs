@@ -2,8 +2,9 @@
 
 namespace BlazorGameStore.API.Requests.Game;
 
-public class CreateGameRequest
+public class UpdateGameRequest
 {
+    public required int Id { get; set; }
     public required string Name { get; set; }
     public required string GenreId { get; set; }
 

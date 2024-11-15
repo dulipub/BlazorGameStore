@@ -2,10 +2,8 @@
 
 namespace BlazorGameStore.API.Models;
 
-public class Game
+public class Game : ModelBase
 {
-    [Key]
-    public int Id { get; set; }
     public required string Name { get; set; }
     public string? Genre { get; set; }
     public decimal Price { get; set; }

@@ -1,8 +1,10 @@
-﻿using BlazorGameStore.API.Responses;
+﻿using BlazorGameStore.API.Requests;
+using BlazorGameStore.API.Responses;
 using BlazorGameStore.API.Services;
 using Mapster;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Results = Microsoft.AspNetCore.Http.HttpResults.Results<Microsoft.AspNetCore.Http.HttpResults.Ok, Microsoft.AspNetCore.Http.HttpResults.BadRequest>;
 
 namespace BlazorGameStore.API.Apis;
 
@@ -12,7 +14,7 @@ public static class GamesApi
     {
         var api = app.MapGroup("/api/games");
 
-        api.MapGet("/", GetAllGames);
+        api.MapGet("/", GamesList);
         api.MapGet("/{id}", GetGame);
         //api.MapPost("/", CreateTodo);
         //api.MapPut("/{id}", UpdateTodo);
@@ -24,17 +26,23 @@ public static class GamesApi
     [ProducesResponseType(typeof(GameResponse), StatusCodes.Status200OK)]
     private static async Task<Results<Ok<GameResponse>, BadRequest>> GetGame(
         int id,
-        [FromServices] IGameService service
+        [FromServices] IGameService service,
+        CancellationToken cancellation
         )
     {
-        var result = await service.GetGame(id);
+        var result = await service.GetGame(id, cancellation);
         var response = result.Adapt<GameResponse>();
 
         return TypedResults.Ok(response);
     }
 
-    private static async Task<ListResponse<GameResponse>> GetAllGames(HttpContext context)
+    private static async Task<Results<Ok<ListResponse<GameResponse>>, BadRequest>> GamesList(
+        ListRequest request,
+        [FromServices] IGameService service,
+        CancellationToken cancellation
+        )
     {
-        throw new NotImplementedException();
+        var response = await service.GetGamesList(request, cancellation);
+        return TypedResults.Ok(response);
     }
 }
