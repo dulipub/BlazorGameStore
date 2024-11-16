@@ -1,4 +1,5 @@
 ﻿using BlazorGameStore.API.Requests;
+using BlazorGameStore.API.Requests.Game;
 using BlazorGameStore.API.Responses;
 using BlazorGameStore.API.Services;
 using Mapster;
@@ -14,11 +15,11 @@ public static class GamesApi
     {
         var api = app.MapGroup("/api/games");
 
-        api.MapGet("/", GamesList);
+        api.MapGet("/list", GamesList);
         api.MapGet("/{id}", GetGame);
-        //api.MapPost("/", CreateTodo);
-        //api.MapPut("/{id}", UpdateTodo);
-        //api.MapDelete("/{id}", DeleteTodo);
+        api.MapPost("/", CreateGame);
+        api.MapPut("/update", UpdateGame);
+        api.MapDelete("/{id}", DeleteGame);
 
         return api.WithOpenApi();
     }
@@ -31,9 +32,8 @@ public static class GamesApi
         )
     {
         var result = await service.GetGame(id, cancellation);
-        var response = result.Adapt<GameResponse>();
 
-        return TypedResults.Ok(response);
+        return TypedResults.Ok(result);
     }
 
     private static async Task<Results<Ok<ListResponse<GameResponse>>, BadRequest>> GamesList(
@@ -44,5 +44,36 @@ public static class GamesApi
     {
         var response = await service.GetGamesList(request, cancellation);
         return TypedResults.Ok(response);
+    }
+
+    [ProducesResponseType(typeof(GameResponse), StatusCodes.Status200OK)]
+    private static async Task<Results<Ok<GameResponse>, BadRequest>> CreateGame(
+        CreateGameRequest request,
+        [FromServices] IGameService service,
+        CancellationToken cancellation
+        )
+    {
+        var result = await service.CreateGame(request, cancellation);
+        return TypedResults.Ok(result);
+    }
+
+    private static async Task<Results<Ok<bool>, BadRequest>> DeleteGame(
+        int id,
+        [FromServices] IGameService service,
+        CancellationToken cancellation
+        )
+    {
+        await service.DeleteGame(id, cancellation);
+        return TypedResults.Ok(true);
+    }
+
+    private static async Task<Results<Ok<GameResponse>, BadRequest>> UpdateGame(
+        UpdateGameRequest request,
+        [FromServices] IGameService service,
+        CancellationToken cancellation
+        )
+    {
+        var result = await service.UpdateGame(request, cancellation);
+        return TypedResults.Ok(result);
     }
 }

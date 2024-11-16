@@ -27,10 +27,14 @@ public class BaseRepository<T>(GameStoreContext context) : IRepository<T> where 
 
     public virtual async Task Add(T entity, CancellationToken cancellation)
     {
+        entity.IsActive = true;
+        entity.CreatedDate = DateTime.UtcNow;
+
         await context.Set<T>().AddAsync(entity, cancellation);
         await context.SaveChangesAsync(cancellation);
     }
 
+    //for simplicity we do not soft delete
     public virtual async Task Remove(T entity, CancellationToken cancellation)
     {
         context.Set<T>().Remove(entity);
