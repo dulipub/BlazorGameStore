@@ -2,6 +2,7 @@
 using BlazorGameStore.API.Requests;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace BlazorGameStore.API.Repositories;
 
@@ -14,6 +15,24 @@ public class BaseRepository<T>(GameStoreContext context) : IRepository<T> where 
         ArgumentNullException.ThrowIfNull(entity);
         return entity;
     }
+
+    public async Task<IEnumerable<T>> Get(
+        Expression<Func<T, bool>> filter, 
+        Func<IQueryable<T>, IOrderedQueryable<T>> orderBy, 
+        params Expression<Func<T, object>>[] includes)
+    {
+        IQueryable<T> query = context.Set<T>();
+        foreach (Expression<Func<T, object>> include in includes)
+        {
+            query = query.Include(include);
+        }
+
+        query = query.Where(filter);
+        query = orderBy(query);
+
+        return await query.ToListAsync().ConfigureAwait(false);
+    }
+
 
     public virtual async Task<List<T>> List(int start, int take, CancellationToken cancellation)
     {

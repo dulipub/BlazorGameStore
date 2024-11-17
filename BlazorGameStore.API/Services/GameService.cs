@@ -24,7 +24,12 @@ public class GameService(IRepository<Game> repository) : IGameService
 {
     public async Task<GameResponse> GetGame(int id, CancellationToken cancellation)
     {
-        var game = await repository.Get(id, cancellation);
+        var games = await repository.Get(
+                g => g.Id == id,
+                x => x.OrderBy(x => x.Id),
+                g => g.Genre
+            );
+        var game = games.FirstOrDefault();
         ArgumentNullException.ThrowIfNull(game);
         return game.Adapt<GameResponse>();
     }
