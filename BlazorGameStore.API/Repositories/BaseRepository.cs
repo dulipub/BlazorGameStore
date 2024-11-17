@@ -17,12 +17,12 @@ public class BaseRepository<T>(GameStoreContext context) : IRepository<T> where 
 
     public virtual async Task<List<T>> List(int start, int take, CancellationToken cancellation)
     {
-        return await context.Set<T>().Order().Skip(start).Take(take).ToListAsync(cancellation);
+        return await context.Set<T>().OrderBy(e => e.Id).Skip(start).Take(take).ToListAsync(cancellation);
     }
 
     public virtual async Task<List<T>> ListDescending(int start, int take, CancellationToken cancellation)
     {
-        return await context.Set<T>().OrderDescending().Skip(start).Take(take).ToListAsync(cancellation);
+        return await context.Set<T>().OrderByDescending(e => e.Id).Skip(start).Take(take).ToListAsync(cancellation);
     }
 
     public virtual async Task Add(T entity, CancellationToken cancellation)

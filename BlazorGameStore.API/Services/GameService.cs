@@ -17,7 +17,7 @@ public interface IGameService
 
     public Task DeleteGame(int id, CancellationToken cancellation);
 
-    public Task<GameResponse> UpdateGame(UpdateGameRequest request, CancellationToken cancellation)
+    public Task<GameResponse> UpdateGame(UpdateGameRequest request, CancellationToken cancellation);
 }
 
 public class GameService(IRepository<Game> repository) : IGameService

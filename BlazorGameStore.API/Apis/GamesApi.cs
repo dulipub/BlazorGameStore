@@ -11,17 +11,17 @@ namespace BlazorGameStore.API.Apis;
 
 public static class GamesApi
 {
-    public static RouteGroupBuilder MapGameApi(this IEndpointRouteBuilder app)
+    public static RouteGroupBuilder MapGamesApi(this IEndpointRouteBuilder app)
     {
         var api = app.MapGroup("/api/games");
 
-        api.MapGet("/list", GamesList);
+        api.MapPost("/list", GamesList);
         api.MapGet("/{id}", GetGame);
         api.MapPost("/", CreateGame);
         api.MapPut("/update", UpdateGame);
         api.MapDelete("/{id}", DeleteGame);
 
-        return api.WithOpenApi();
+        return api.WithOpenApi().AllowAnonymous();
     }
 
     [ProducesResponseType(typeof(GameResponse), StatusCodes.Status200OK)]
@@ -37,7 +37,7 @@ public static class GamesApi
     }
 
     private static async Task<Results<Ok<ListResponse<GameResponse>>, BadRequest>> GamesList(
-        ListRequest request,
+        [FromBody] ListRequest request,
         [FromServices] IGameService service,
         CancellationToken cancellation
         )
@@ -48,7 +48,7 @@ public static class GamesApi
 
     [ProducesResponseType(typeof(GameResponse), StatusCodes.Status200OK)]
     private static async Task<Results<Ok<GameResponse>, BadRequest>> CreateGame(
-        CreateGameRequest request,
+        [FromBody] CreateGameRequest request,
         [FromServices] IGameService service,
         CancellationToken cancellation
         )
@@ -68,7 +68,7 @@ public static class GamesApi
     }
 
     private static async Task<Results<Ok<GameResponse>, BadRequest>> UpdateGame(
-        UpdateGameRequest request,
+        [FromBody] UpdateGameRequest request,
         [FromServices] IGameService service,
         CancellationToken cancellation
         )
