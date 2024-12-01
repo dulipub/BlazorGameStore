@@ -4,10 +4,12 @@ using BlazorGameStore.Components;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorComponents()
-	.AddInteractiveServerComponents();
-builder.Services.AddSingleton<GamesClient>();
-builder.Services.AddSingleton<GenreClient>();
+builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+
+var api = builder.Configuration["ApiUrl"] ?? throw new Exception("Setting null : ApiUrl");
+builder.Services.AddHttpClient<GamesClient>(client => client.BaseAddress = new Uri(api));
+builder.Services.AddHttpClient<GenreClient>(client => client.BaseAddress = new Uri(api));
+
 
 var app = builder.Build();
 

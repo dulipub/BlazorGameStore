@@ -56,10 +56,9 @@ else
 {
     private List<GameSummary> games = new();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
-        games = Client.GetData();
+        games = await Client.GetDataAsync();
     }
 
     private static string GetEditGameUrl(int id) => $"editgame/{id.ToString()}";
