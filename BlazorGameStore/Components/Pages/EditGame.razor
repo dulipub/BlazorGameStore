@@ -16,7 +16,7 @@ else
 {
     <div class="row">
         <div class="col-md-4">
-            <EditForm Model="@game" FormName="editgame" OnValidSubmit="HandleSubmit">
+            <EditForm Model="@game" FormName="editgame" OnValidSubmit="HandleSubmitAsync">
                 <DataAnnotationsValidator />
                 <ValidationSummary></ValidationSummary>
                 <div class="mb-3">
@@ -63,13 +63,12 @@ else
     [SupplyParameterFromForm]
     private GameDetail? game { get; set; }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
-        genres = GenreClient.GetData();
+        genres = await GenreClient.GetDataAsync();
     }
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         //OnParametersSet is called whenever form is loaded. This inlude initial load and submiting
         //therefore we check if user submit and if form params are populated continue with resetting game to initial state
@@ -80,7 +79,7 @@ else
 
         if(Id is not null)
         {
-            game = GamesClient.GetGame(Id.Value);
+            game = await GamesClient.GetGameAsync(Id.Value);
             title = $"Edit {game.Name}";
         }
         else
@@ -94,18 +93,18 @@ else
         }
     }
 
-    private void HandleSubmit()
+    private async Task HandleSubmitAsync()
     {
         ArgumentNullException.ThrowIfNull(game);
         ArgumentException.ThrowIfNullOrEmpty(game.Name);
         if(Id is null)
         {
-            GamesClient.Add(game);
+            await GamesClient.AddAsync(game);
         }
         else
         {
             game.Id = Id.Value;
-            GamesClient.UpdateGame(game);
+            await GamesClient.UpdateGameAsync(game);
         }
 
         NavigationManager.NavigateTo("/");
